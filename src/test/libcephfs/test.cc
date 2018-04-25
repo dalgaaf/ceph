@@ -614,6 +614,39 @@ TEST(LibCephFS, LstatSlashdot) {
   ceph_shutdown(cmount);
 }
 
+TEST(LibCephFS, StatDirNLink) {
+  struct ceph_mount_info *cmount;
+  ASSERT_EQ(ceph_create(&cmount, NULL), 0);
+  ASSERT_EQ(ceph_conf_read_file(cmount, NULL), 0);
+  ASSERT_EQ(0, ceph_conf_parse_env(cmount, NULL));
+  ASSERT_EQ(ceph_mount(cmount, NULL), 0);
+
+  char test_dir1[256];
+  sprintf(test_dir1, "dir1_symlinks_%d", getpid());
+  ASSERT_EQ(ceph_mkdir(cmount, test_dir1, 0700), 0);
+
+  int fd = ceph_open(cmount, test_dir1, O_DIRECTORY|O_RDONLY, 0);
+  ASSERT_GT(fd, 0);
+  struct ceph_statx stx;
+  ASSERT_EQ(ceph_fstatx(cmount, fd, &stx, 0, AT_SYMLINK_NOFOLLOW), 0);
+  assert(stx.stx_nlink == 2);
+
+  {
+    char test_dir2[256];
+    sprintf(test_dir1, "%s/.", test_dir1);
+    ASSERT_EQ(ceph_statx(cmount, test_dir2, &stx, 0, AT_SYMLINK_NOFOLLOW), 0);
+    assert(stx.stx_nlink == 2);
+  }
+
+  ASSERT_EQ(ceph_rmdir(cmount, test_dir1), 0);
+  ASSERT_EQ(ceph_fstatx(cmount, fd, &stx, 0, AT_SYMLINK_NOFOLLOW), 0);
+  assert(stx.stx_nlink == 0);
+
+  ceph_close(cmount, fd);
+
+  ceph_shutdown(cmount);
+}
+
 TEST(LibCephFS, DoubleChmod) {
 
   struct ceph_mount_info *cmount;
