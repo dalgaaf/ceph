@@ -7056,17 +7056,8 @@ int Client::fill_stat(Inode *in, struct stat *st, frag_info_t *dirstat, nest_inf
   st->st_dev = in->snapid;
   st->st_mode = in->mode;
   st->st_rdev = in->rdev;
-  if (in->is_dir()) {
-    switch (in->nlink) {
-      case 0:
-        st->st_nlink = 0; /* dir is unlinked */
-        break;
-      case 1:
-        st->st_nlink = 2; /* include <dir>/. self-reference */
-        break;
-      default:
-        ceph_abort();
-    }
+  if (in->is_dir() && st->st_nlink > 0) {
+    st->st_nlink = in->nlink + 1; /* include <dir>/. self-reference */
   } else {
     st->st_nlink = in->nlink;
   }
