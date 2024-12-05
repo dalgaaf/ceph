@@ -27,7 +27,7 @@ bool get_rollback_snap_id(
     std::map<librados::snap_t, SnapInfo>::reverse_iterator end,
     uint64_t *rollback_snap_id) {
 
-  for (; it != end; it++) {
+  for (; it != end; ++it) {
     auto mirror_ns = std::get<cls::rbd::MirrorSnapshotNamespace>(
       it->second.snap_namespace);
     if (mirror_ns.state != cls::rbd::MIRROR_SNAPSHOT_STATE_NON_PRIMARY) {
