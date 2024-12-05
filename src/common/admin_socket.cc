@@ -916,10 +916,10 @@ class RaiseHook: public AdminSocketHook {
     int result = 0;
     std::transform(sigdesc.begin(), sigdesc.end(), sigdesc.begin(),
         [](unsigned char c) { return std::toupper(c); });
-    if (0 == sigdesc.find("-")) {
+    if (sigdesc.starts_with("-")) {
       sigdesc.erase(0, 1);
     }
-    if (0 == sigdesc.find("SIG")) {
+    if (sigdesc.starts_with("SIG")) {
       sigdesc.erase(0, 3);
     }
 
