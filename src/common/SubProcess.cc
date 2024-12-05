@@ -244,7 +244,7 @@ void SubProcess::exec() {
   args.push_back(cmd.c_str());
   for (std::vector<std::string>::iterator i = cmd_args.begin();
        i != cmd_args.end();
-       i++) {
+       ++i) {
     args.push_back(i->c_str());
   }
   args.push_back(NULL);
