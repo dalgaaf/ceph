@@ -2167,9 +2167,9 @@ bool AuthMonitor::_upgrade_format_to_luminous()
     if (n == "client.admin") {
       // admin gets it all
       newcap = "allow *";
-    } else if (n.find("osd.") == 0 ||
-	       n.find("mds.") == 0 ||
-	       n.find("mon.") == 0) {
+    } else if (n.starts_with("osd.") ||
+	       n.starts_with("mds.") ||
+	       n.starts_with("mon.")) {
       // daemons follow their profile
       string type = n.substr(0, 3);
       newcap = "allow profile " + type;
@@ -2190,7 +2190,7 @@ bool AuthMonitor::_upgrade_format_to_luminous()
       changed = true;
     }
 
-    if (n.find("mgr.") == 0 &&
+    if (n.starts_with("mgr.") &&
 	p->second.caps.count("mon")) {
       // the kraken ceph-mgr@.service set the mon cap to 'allow *'.
       auto blp = p->second.caps["mon"].cbegin();
