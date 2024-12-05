@@ -234,7 +234,7 @@ int queue_enqueue(cls_method_context_t hctx, cls_queue_enqueue_op& op, cls_queue
           return -ENOSPC;
         }
       }
-    } else if (head.front.offset > head.tail.offset) {
+    } else {
       if ((head.tail.offset + bl.length()) <= head.front.offset) {
         CLS_LOG(5, "INFO: queue_enqueue: Writing data size and data: offset: %s, size: %u", head.tail.to_str().c_str(), bl.length());
         //write data size and data at tail offset
@@ -290,7 +290,7 @@ int queue_list_entries(cls_method_context_t hctx, const cls_queue_list_op& op, c
   //Calculate length of contiguous data to be read depending on front, tail and start offset
   if (head.tail.offset > head.front.offset) {
     contiguous_data_size = head.tail.offset - start_offset;
-  } else if (head.front.offset >= head.tail.offset) {
+  } else {
     if (start_offset >= head.front.offset) {
       contiguous_data_size = head.queue_size - start_offset;
       wrap_around = true;
