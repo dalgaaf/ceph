@@ -37,9 +37,7 @@ void MonSub::acked(uint32_t interval)
 bool MonSub::reload()
 {
   for (auto& [what, sub] : sub_sent) {
-    if (sub_new.count(what) == 0) {
-      sub_new[what] = sub;
-    }
+    sub_new.try_emplace(what, sub);
   }
   return have_new();
 }
