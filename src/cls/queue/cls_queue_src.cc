@@ -284,7 +284,7 @@ int queue_list_entries(cls_method_context_t hctx, const cls_queue_list_op& op, c
   }
 
   op_ret.is_truncated = true;
-  uint64_t contiguous_data_size = 0, size_to_read = 0;
+  uint64_t contiguous_data_size = 0;
   bool wrap_around = false;
 
   //Calculate length of contiguous data to be read depending on front, tail and start offset
@@ -309,10 +309,10 @@ int queue_list_entries(cls_method_context_t hctx, const cls_queue_list_op& op, c
   do
   {
     CLS_LOG(10, "INFO: queue_list_entries(): start_offset is %lu", start_offset);
-  
+
     bufferlist bl_chunk;
     //Read chunk size at a time, if it is less than contiguous data size, else read contiguous data size
-    size_to_read = std::min(contiguous_data_size, large_chunk_size);
+    uint64_t size_to_read = std::min(contiguous_data_size, large_chunk_size);
     CLS_LOG(10, "INFO: queue_list_entries(): size_to_read is %lu", size_to_read);
     if (size_to_read == 0) {
       next_marker = head.tail;
