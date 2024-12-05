@@ -71,7 +71,7 @@ int ServiceDaemon<I>::init() {
   dout(20) << dendl;
 
   std::string id = m_cct->_conf->name.get_id();
-  if (id.find(RBD_MIRROR_AUTH_ID_PREFIX) == 0) {
+  if (id.starts_with(RBD_MIRROR_AUTH_ID_PREFIX)) {
     id = id.substr(RBD_MIRROR_AUTH_ID_PREFIX.size());
   }
 
