@@ -130,9 +130,8 @@ void EventOutput::summary() const
       type = le->get_type_str();
     else if (auto& pi = i->second.pi; pi)
       type = pi->get_type_str();
-    if (type_count.count(type) == 0) {
-      type_count[type] = 0;
-    }
+
+    type_count.try_emplace(type, 0);
     type_count[type] += 1;
   }
 
