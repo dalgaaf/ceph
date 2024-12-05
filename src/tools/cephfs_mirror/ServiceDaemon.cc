@@ -64,7 +64,7 @@ int ServiceDaemon::init() {
   dout(20) << dendl;
 
   std::string id = m_cct->_conf->name.get_id();
-  if (id.find(CEPHFS_MIRROR_AUTH_ID_PREFIX) == 0) {
+  if (id.starts_with(CEPHFS_MIRROR_AUTH_ID_PREFIX)) {
     id = id.substr(CEPHFS_MIRROR_AUTH_ID_PREFIX.size());
   }
   std::string instance_id = stringify(m_rados->get_instance_id());
