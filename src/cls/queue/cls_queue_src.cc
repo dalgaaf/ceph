@@ -481,13 +481,11 @@ int queue_remove_entries(cls_method_context_t hctx, const cls_queue_remove_op& o
   //Zero out the entries that have been removed, to reclaim storage space
   if (end_marker.offset > head.front.offset && end_marker.gen == head.front.gen) {
     uint64_t len = end_marker.offset - head.front.offset;
-    if (len > 0) {
-      auto ret = cls_cxx_write_zero(hctx, head.front.offset, len);
-      if (ret < 0) {
-        CLS_LOG(5, "INFO: queue_remove_entries: Failed to zero out entries");
-        CLS_LOG(10, "INFO: queue_remove_entries: Start offset = %s", head.front.to_str().c_str());
-        return ret;
-      }
+    auto ret = cls_cxx_write_zero(hctx, head.front.offset, len);
+    if (ret < 0) {
+      CLS_LOG(5, "INFO: queue_remove_entries: Failed to zero out entries");
+      CLS_LOG(10, "INFO: queue_remove_entries: Start offset = %s", head.front.to_str().c_str());
+      return ret;
     }
   } else if ((head.front.offset >= end_marker.offset) && (end_marker.gen == head.front.gen + 1)) { //start offset > end offset
     uint64_t len = head.queue_size - head.front.offset;
