@@ -985,7 +985,7 @@ PG::interruptible_future<> PG::repair_object(
   peering_state.force_object_missing(pg_whoami, oid, v);
   auto [op, fut] = get_shard_services().start_operation<UrgentRecovery>(
     oid, v, this, get_shard_services(), get_osdmap_epoch());
-  return std::move(fut);
+  return fut;
 }
 
 PG::interruptible_future<>

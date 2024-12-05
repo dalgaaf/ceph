@@ -599,7 +599,7 @@ public:
   enter(T &stage, typename T::BlockingEvent::template Trigger<OpT>&& t) {
     auto ret = enter_maybe_sync<OpT, T>(stage, std::move(t));
     if (ret.has_value()) {
-      return std::move(ret.value());
+      return ret.value();
     } else {
       return seastar::now();
     }
