@@ -7711,7 +7711,7 @@ int OSDMonitor::parse_erasure_code_profile(const vector<string> &erasure_code_pr
       const string key = i->substr(0, equal);
       equal++;
       const string value = i->substr(equal);
-      if (key.find("ruleset-") == 0) {
+      if (key.starts_with("ruleset-")) {
 	*ss << "property '" << key << "' is no longer supported; try "
 	    << "'crush-" << key.substr(8) << "' instead";
 	return -EINVAL;
