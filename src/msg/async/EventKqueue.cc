@@ -199,6 +199,8 @@ int KqueueDriver::resize_events(int newsize)
   ldout(cct,30) << __func__ << " kqfd = " << kqfd << "newsize = " << newsize 
                 << dendl;
   if (newsize > sav_max) {
+    // see: https://github.com/ceph/ceph/pull/15088
+    // cppcheck-suppress memleakOnRealloc
     sav_events = (struct SaveEvent*)realloc(sav_events, sizeof(struct SaveEvent)*newsize);
     if (!sav_events) {
       lderr(cct) << __func__ << " unable to realloc memory: "
