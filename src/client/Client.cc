@@ -15956,9 +15956,7 @@ int Client::ll_write_block(Inode *in, uint64_t blockid,
   object_t oid = file_object_t(vino.ino, blockid);
   SnapContext fakesnap;
   ceph::bufferlist bl;
-  if (length > 0) {
-    bl.push_back(buffer::copy(buf, length));
-  }
+  bl.push_back(buffer::copy(buf, length));
 
   ldout(cct, 1) << "ll_block_write for " << vino.ino << "." << blockid
 		<< dendl;
