@@ -160,37 +160,39 @@ class SharedDriverQueueData {
 
     SharedDriverQueueData(NVMEDevice *bdev, SharedDriverData *driver)
       : bdev(bdev),
-        driver(driver) {
-    ctrlr = driver->ctrlr;
-    ns = driver->ns;
-    block_size = driver->block_size;
+        driver(driver),
+        completed_op_seq(0),
+        queue_op_seq(0) {
+      ctrlr = driver->ctrlr;
+      ns = driver->ns;
+      block_size = driver->block_size;
 
-    struct spdk_nvme_io_qpair_opts opts = {};
-    spdk_nvme_ctrlr_get_default_io_qpair_opts(ctrlr, &opts, sizeof(opts));
-    opts.qprio = SPDK_NVME_QPRIO_URGENT;
-    // usable queue depth should minus 1 to avoid overflow.
-    max_queue_depth = opts.io_queue_size - 1;
-    qpair = spdk_nvme_ctrlr_alloc_io_qpair(ctrlr, &opts, sizeof(opts));
-    ceph_assert(qpair != NULL);
+      struct spdk_nvme_io_qpair_opts opts = {};
+      spdk_nvme_ctrlr_get_default_io_qpair_opts(ctrlr, &opts, sizeof(opts));
+      opts.qprio = SPDK_NVME_QPRIO_URGENT;
+      // usable queue depth should minus 1 to avoid overflow.
+      max_queue_depth = opts.io_queue_size - 1;
+      qpair = spdk_nvme_ctrlr_alloc_io_qpair(ctrlr, &opts, sizeof(opts));
+      ceph_assert(qpair != NULL);
 
-    // allocate spdk dma memory
-    for (uint16_t i = 0; i < data_buffer_default_num; i++) {
-      void *b = spdk_dma_zmalloc(data_buffer_size, CEPH_PAGE_SIZE, NULL);
-      if (!b) {
-        derr << __func__ << " failed to create memory pool for nvme data buffer" << dendl;
-        ceph_assert(b);
+      // allocate spdk dma memory
+      for (uint16_t i = 0; i < data_buffer_default_num; i++) {
+        void *b = spdk_dma_zmalloc(data_buffer_size, CEPH_PAGE_SIZE, NULL);
+        if (!b) {
+          derr << __func__ << " failed to create memory pool for nvme data buffer" << dendl;
+          ceph_assert(b);
+        }
+        data_buf_list.push_front(*reinterpret_cast<data_cache_buf *>(b));
       }
-      data_buf_list.push_front(*reinterpret_cast<data_cache_buf *>(b));
-    }
-  }
-
-  ~SharedDriverQueueData() {
-    if (qpair) {
-      spdk_nvme_ctrlr_free_io_qpair(qpair);
     }
 
-    data_buf_list.clear_and_dispose(spdk_dma_free);
-  }
+    ~SharedDriverQueueData() {
+      if (qpair) {
+        spdk_nvme_ctrlr_free_io_qpair(qpair);
+      }
+
+      data_buf_list.clear_and_dispose(spdk_dma_free);
+    }
 };
 
 struct Task {
