@@ -78,7 +78,7 @@ int ExtBlkDevVdo::get_vdo_stats_handle()
       return rc;
     }
     // ok, see if there are constituent devices
-    if (dev.find("dm-") == 0) {
+    if (dev.starts_with("dm-")) {
       get_dm_parents(dev, &devs);
     }
   }
