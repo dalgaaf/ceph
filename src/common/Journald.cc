@@ -206,9 +206,9 @@ int JournaldClient::open_mem_file()
     return open(mem_file_dir, O_TMPFILE | O_EXCL | O_CLOEXEC, S_IRUSR | S_IWUSR);
   case MemFileMode::OPEN_UNLINK:
     char mem_file_template[] = "/dev/shm/ceph-journald-XXXXXX";
-    int fd = mkostemp(mem_file_template, O_CLOEXEC);
+    int fd_mem = mkostemp(mem_file_template, O_CLOEXEC);
     unlink(mem_file_template);
-    return fd;
+    return fd_mem;
   }
   ceph_abort("Unexpected mem_file_mode");
 }
