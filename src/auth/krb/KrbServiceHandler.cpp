@@ -41,7 +41,6 @@ int KrbServiceHandler::handle_request(
   OM_uint32 gss_major_status(0); 
   OM_uint32 gss_minor_status(0);
   OM_uint32 gss_result_flags(0); 
-  std::string status_str(" ");
 
   ldout(cct, 20) 
       << "KrbServiceHandler::handle_request() " << dendl; 
@@ -111,10 +110,10 @@ int KrbServiceHandler::handle_request(
         }
         break;
       }
-            
+
     default: 
       {
-        status_str = gss_auth_show_status(gss_major_status, 
+        auto status_str = gss_auth_show_status(gss_major_status, 
                                           gss_minor_status);
         ldout(cct, 0) 
             << "ERROR: KrbServiceHandler::handle_response() "
