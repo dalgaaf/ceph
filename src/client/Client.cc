@@ -4604,7 +4604,6 @@ void Client::remove_cap(Cap *cap, bool queue_release)
   }
   size_t n = in.caps.erase(mds);
   ceph_assert(n == 1);
-  cap = nullptr;
 
   if (!in.is_any_caps()) {
     ldout(cct, 15) << __func__ << " last one, closing snaprealm " << in.snaprealm << dendl;
