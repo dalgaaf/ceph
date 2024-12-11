@@ -350,7 +350,7 @@ void AdminSocket::do_accept()
     }
     if (cmd[0] == '\0') {
       // old protocol: __be32
-      if (pos == 3 && cmd[0] == '\0') {
+      if (pos == 3) {
 	switch (cmd[3]) {
 	case 0:
 	  c = "0";
